@@ -12,10 +12,10 @@ let emit = defineEmits(["startGame"]);
 const handleSubmit = () => {
   playerList.value = [];
   if (playerOneUserName.value !== "") {
-    playerList.value.push(new Player(playerOneUserName.value, false, "X"));
+    playerList.value.push(new Player(playerOneUserName.value, "X"));
   }
   if (playerTwoUserName.value !== "") {
-    playerList.value.push(new Player(playerTwoUserName.value, false, "O"));
+    playerList.value.push(new Player(playerTwoUserName.value, "O"));
   }
 };
 
