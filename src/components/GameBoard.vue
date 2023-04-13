@@ -1,26 +1,68 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Player } from "../models/Player";
+import { Square } from "../models/Square";
 
-// const state = ref<Player>({ name: "Sanna", id: 2 });
+// const currentPlayer = ref(0);
+const props = defineProps<IGameBoardProps>();
 
-const handleClick = (num: number, event: MouseEvent) => {
-  console.log("Du klickade på", num, event);
+const currentPlayer = ref<Player>(props.players[0]);
+
+// // const currentPlayer = ref<Player>(props.players[0]);
+
+interface IGameBoardProps {
+  players: Player[];
+}
+
+const squares = ref<Square[]>([
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+  new Square("", false, ""),
+]);
+
+const toggleSquare = (i: number) => {
+  squares.value[i].clicked = !squares.value[i].clicked;
+  squares.value[i].marker = currentPlayer.value.marker;
+
+  // if (currentPlayer === props.players[0]) {
+  //   currentPlayer === props.players[1];
+  // } else {
+  //   currentPlayer === props.user[0];
+  // }
+
+  //om spelar ett klickar ge ett kryss
+  //om spelare två klickar ge en cirkel
 };
 </script>
 
 <template>
-  <div>Tic Tac Toe by Rossäng</div>
   <div class="board">
-    <div class="square" v-for="num of 9" :key="num" @click="handleClick(num, $event)">
-      {{ num }}
+    <div
+      v-for="(square, index) in squares"
+      :key="index"
+      class="square"
+      :class="square.clicked ? 'clicked' : ''"
+      @click.once="toggleSquare(index)"
+    >
+      {{ square.marker }}
+      <!-- //det som syns i rutan -->
     </div>
   </div>
+  <h3>These little fellas is playing tha game</h3>
+  <p>Now is it your turn: {{ currentPlayer.name }}</p>
+
+  <!-- <button type="button" @click.once="playGame">Starta spelet</button> -->
 </template>
 
 <style scoped>
 .board {
-  width: 500px;
+  width: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -34,5 +76,9 @@ const handleClick = (num: number, event: MouseEvent) => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.clicked {
+  background-color: blue;
 }
 </style>

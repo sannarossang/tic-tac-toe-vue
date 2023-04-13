@@ -1,4 +1,3 @@
-export interface Player {
-  id: number;
-  name: string;
+export class Player {
+  constructor(public name: string, public winner: boolean, public marker: string) {}
 }
