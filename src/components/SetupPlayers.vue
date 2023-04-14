@@ -20,8 +20,6 @@ const handleSubmit = () => {
 };
 
 const playGame = () => {
-  console.log("inside play game", playerList);
-
   if (playerList.value.length === 2) {
     emit("startGame", playerList.value);
   } else {
@@ -29,7 +27,6 @@ const playGame = () => {
     console.log("Det måste vara två spelare med");
   }
 };
-console.log("efter submit", playerList.value);
 </script>
 
 <template>

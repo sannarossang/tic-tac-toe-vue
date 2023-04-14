@@ -7,8 +7,17 @@ const props = defineProps<IGameBoardProps>();
 
 const currentPlayer = ref<Player>(props.players[0]);
 
+let winner = ref<Player>();
+
+const gameOver = ref<boolean>(false);
+
 interface IGameBoardProps {
   players: Player[];
+}
+
+let emit = defineEmits(["quitGame"]);
+function quitGame() {
+  emit("quitGame");
 }
 
 const squares = ref<Square[]>([
@@ -23,18 +32,21 @@ const squares = ref<Square[]>([
   new Square(false, ""),
 ]);
 
-//byt funktionsnamn?
 const toggleSquare = (i: number) => {
+  if (gameOver.value === true) {
+    return;
+  }
   squares.value[i].clicked = !squares.value[i].clicked;
   squares.value[i].marker = currentPlayer.value.marker;
-
-  if (currentPlayer.value === props.players[0]) {
-    currentPlayer.value = props.players[1];
-  } else {
-    currentPlayer.value = props.players[0];
-  }
-
   isWinner();
+  if (gameOver.value === false) {
+    if (currentPlayer.value === props.players[0]) {
+      currentPlayer.value = props.players[1];
+    } else {
+      currentPlayer.value = props.players[0];
+    }
+    console.log(currentPlayer.value);
+  }
 };
 
 function isWinner() {
@@ -63,25 +75,24 @@ function isWinner() {
       const oIsWinner = (currentValue: string) => currentValue == "O";
 
       if (potentialWinningLineMarkers.every(xIsWinner) && potentialWinningLineMarkers.length == 3) {
-        console.log("X is winner");
+        gameOver.value = true;
+        winner = currentPlayer;
       }
 
       if (potentialWinningLineMarkers.every(oIsWinner) && potentialWinningLineMarkers.length == 3) {
-        console.log("O is winner");
+        gameOver.value = true;
+        winner = currentPlayer;
       }
     }
   }
 }
-
-let emit = defineEmits(["quitGame"]);
-function quitGame() {
-  emit("quitGame");
-}
 </script>
 
 <template>
-  <h3>These little fellas is playing tha game</h3>
-  <p>Now is it your turn: {{ currentPlayer.name }}</p>
+  <h3>These little fellas is playing tha game:</h3>
+  <h3>{{ props.players[0].name }} and {{ props.players[1].name }}</h3>
+  <p>And now it is your turn: {{ currentPlayer.name }}</p>
+  <p>We have a winner: {{ winner?.name }}</p>
   <p></p>
 
   <div class="board">
@@ -93,7 +104,6 @@ function quitGame() {
       @click.once="toggleSquare(index)"
     >
       {{ square.marker }}
-      <!-- //det som syns i rutan -->
     </div>
   </div>
 
