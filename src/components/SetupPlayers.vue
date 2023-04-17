@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Player } from "../models/Player";
+import { Square } from "../models/Square";
+
+// const props = defineProps<ISetupPlayersProps>();
+
+// interface ISetupPlayersProps {
+//   board: Square[];
+// }
 
 const playerList = ref<Player[]>(JSON.parse(localStorage.getItem("players") || "[]"));
 
@@ -35,19 +42,21 @@ function savePlayersToLs(players: Player[]) {
 }
 </script>
 
-<template>
+<template v-if="playerList !== null">
   <h3>Lets play!</h3>
-  <form @submit.prevent>
-    <div>
-      <input v-model="playerOneUserName" type="text" placeholder="Player one" class="textbox" />
-    </div>
-    <div>
-      <input v-model="playerTwoUserName" type="text" placeholder="Player two" class="textbox" />
-    </div>
-    <div>
-      <button type="submit" class="btn" @click="handleSubmit">Submit</button>
-    </div>
-  </form>
+  <div class="formContainer">
+    <form @submit.prevent>
+      <div>
+        <input v-model="playerOneUserName" type="text" placeholder="Player one" class="textbox" />
+      </div>
+      <div>
+        <input v-model="playerTwoUserName" type="text" placeholder="Player two" class="textbox" />
+      </div>
+      <div>
+        <button type="submit" class="btn" @click="handleSubmit">Submit</button>
+      </div>
+    </form>
+  </div>
   <p>Now, these two are up for a game of Tic Tac Toe:</p>
   <div v-for="player in playerList">{{ player.name }}</div>
   <button type="submit" class="btn" @click="() => playGame()">All set up! Let's play the game</button>

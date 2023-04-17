@@ -12,10 +12,19 @@ function toggleGame(players: Player[]) {
   startGame.value = true;
 }
 
+function shouldStart() {
+  if (localStorage.getItem("players") != "[]") {
+    playerList.value = JSON.parse(localStorage.getItem("players") || "[]");
+    startGame.value = true;
+  }
+}
+
 function quitGame() {
   startGame.value = false;
   playerList.value = [];
 }
+
+shouldStart();
 </script>
 
 <template>
