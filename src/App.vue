@@ -8,7 +8,6 @@ let startGame = ref<boolean>(false);
 let playerList = ref<Player[]>([]);
 
 function toggleGame(players: Player[]) {
-  console.log("toggeld");
   playerList.value = players;
   startGame.value = true;
 }

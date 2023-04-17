@@ -23,7 +23,7 @@ const reset = () => {
     new Square(false, ""),
   ];
   gameOver.value = false;
-  winner.value = new Player("", "");
+  winner.value = new Player("", "", 0);
   if (currentPlayer.value === props.players[0]) {
     currentPlayer.value = props.players[1];
   } else {
@@ -40,17 +40,25 @@ function quitGame() {
   emit("quitGame");
 }
 
-const board = ref<Square[]>([
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-  new Square(false, ""),
-]);
+const board = ref<Square[]>(createOrGetBoard());
+
+function createOrGetBoard() {
+  if (localStorage.getItem("board") !== null) {
+    return JSON.parse(localStorage.getItem("board") || "[]");
+  } else {
+    return [
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+      new Square(false, ""),
+    ];
+  }
+}
 
 const toggleSquare = (i: number) => {
   if (gameOver.value || board.value[i].clicked) {
@@ -67,6 +75,7 @@ const toggleSquare = (i: number) => {
       currentPlayer.value = props.players[0];
     }
   }
+  saveBoardToLs(board.value);
 };
 
 function isWinner() {
@@ -103,8 +112,21 @@ function isWinner() {
         gameOver.value = true;
         winner.value = currentPlayer.value;
       }
+
+      // saveWinnerToLs(winner.value[]);
+      // saveWinnerToLs(currentPlayer.value);
     }
   }
+}
+
+function pushWinningPoints() {}
+
+function saveWinnerToLs(winner: Player[]) {
+  localStorage.setItem("winners", JSON.stringify(winner));
+}
+
+function saveBoardToLs(board: Square[]) {
+  localStorage.setItem("board", JSON.stringify(board));
 }
 </script>
 

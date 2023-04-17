@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { Player } from "../models/Player";
 
-const playerList = ref<Player[]>([]);
+const playerList = ref<Player[]>(JSON.parse(localStorage.getItem("players") || "[]"));
 
 const playerOneUserName = ref("");
 const playerTwoUserName = ref("");
@@ -12,11 +12,13 @@ let emit = defineEmits(["startGame"]);
 const handleSubmit = () => {
   playerList.value = [];
   if (playerOneUserName.value !== "") {
-    playerList.value.push(new Player(playerOneUserName.value, "X"));
+    playerList.value.push(new Player(playerOneUserName.value, "X", 0));
   }
   if (playerTwoUserName.value !== "") {
-    playerList.value.push(new Player(playerTwoUserName.value, "O"));
+    playerList.value.push(new Player(playerTwoUserName.value, "O", 0));
   }
+
+  savePlayersToLs(playerList.value);
 };
 
 const playGame = () => {
@@ -27,6 +29,10 @@ const playGame = () => {
     console.log("Det måste vara två spelare med");
   }
 };
+
+function savePlayersToLs(players: Player[]) {
+  localStorage.setItem("players", JSON.stringify(players));
+}
 </script>
 
 <template>
