@@ -8,8 +8,28 @@ const props = defineProps<IGameBoardProps>();
 const currentPlayer = ref<Player>(props.players[0]);
 
 let winner = ref<Player>();
-
 const gameOver = ref<boolean>(false);
+
+const reset = () => {
+  board.value = [
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+    new Square(false, ""),
+  ];
+  gameOver.value = false;
+  winner.value = new Player("", "");
+  if (currentPlayer.value === props.players[0]) {
+    currentPlayer.value = props.players[1];
+  } else {
+    currentPlayer.value = props.players[0];
+  }
+};
 
 interface IGameBoardProps {
   players: Player[];
@@ -20,7 +40,7 @@ function quitGame() {
   emit("quitGame");
 }
 
-const squares = ref<Square[]>([
+const board = ref<Square[]>([
   new Square(false, ""),
   new Square(false, ""),
   new Square(false, ""),
@@ -33,11 +53,12 @@ const squares = ref<Square[]>([
 ]);
 
 const toggleSquare = (i: number) => {
-  if (gameOver.value === true) {
+  if (gameOver.value || board.value[i].clicked) {
     return;
   }
-  squares.value[i].clicked = !squares.value[i].clicked;
-  squares.value[i].marker = currentPlayer.value.marker;
+
+  board.value[i].clicked = !board.value[i].clicked;
+  board.value[i].marker = currentPlayer.value.marker;
   isWinner();
   if (gameOver.value === false) {
     if (currentPlayer.value === props.players[0]) {
@@ -45,7 +66,6 @@ const toggleSquare = (i: number) => {
     } else {
       currentPlayer.value = props.players[0];
     }
-    console.log(currentPlayer.value);
   }
 };
 
@@ -68,7 +88,7 @@ function isWinner() {
     for (let j = 0; j < potentialWinningCombo.length; j++) {
       let positionToGetValueFrom = potentialWinningCombo[j];
 
-      let potentialMarkerValue = squares.value[positionToGetValueFrom].marker;
+      let potentialMarkerValue = board.value[positionToGetValueFrom].marker;
       potentialWinningLineMarkers.push(potentialMarkerValue);
 
       const xIsWinner = (currentValue: string) => currentValue == "X";
@@ -76,12 +96,12 @@ function isWinner() {
 
       if (potentialWinningLineMarkers.every(xIsWinner) && potentialWinningLineMarkers.length == 3) {
         gameOver.value = true;
-        winner = currentPlayer;
+        winner.value = currentPlayer.value;
       }
 
       if (potentialWinningLineMarkers.every(oIsWinner) && potentialWinningLineMarkers.length == 3) {
         gameOver.value = true;
-        winner = currentPlayer;
+        winner.value = currentPlayer.value;
       }
     }
   }
@@ -97,20 +117,19 @@ function isWinner() {
 
   <div class="board">
     <div
-      v-for="(square, index) in squares"
+      v-for="(square, index) in board"
       :key="index"
       class="square"
       :class="square.clicked ? 'clicked' : ''"
-      @click.once="toggleSquare(index)"
+      @click="toggleSquare(index)"
     >
       {{ square.marker }}
     </div>
   </div>
 
-  <button type="button" @click.once="">Play again</button>
+  <button type="button" @click="reset()">Play again</button>
   <button type="button" @click.once="quitGame()">Back to start</button>
 </template>
-
 <style scoped>
 .board {
   width: 600px;
