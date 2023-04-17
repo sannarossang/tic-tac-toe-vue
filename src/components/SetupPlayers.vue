@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Player } from "../models/Player";
-import { Square } from "../models/Square";
-
-// const props = defineProps<ISetupPlayersProps>();
-
-// interface ISetupPlayersProps {
-//   board: Square[];
-// }
 
 const playerList = ref<Player[]>(JSON.parse(localStorage.getItem("players") || "[]"));
 
@@ -18,13 +11,18 @@ let emit = defineEmits(["startGame"]);
 
 const handleSubmit = () => {
   playerList.value = [];
-  if (playerOneUserName.value !== "") {
-    playerList.value.push(new Player(playerOneUserName.value, "X", 0));
-  }
-  if (playerTwoUserName.value !== "") {
-    playerList.value.push(new Player(playerTwoUserName.value, "O", 0));
+  if (playerOneUserName.value === "" || playerTwoUserName.value === "") {
+    alert("Input can not be empty");
+    return;
   }
 
+  if (playerOneUserName.value === playerTwoUserName.value) {
+    alert("Input can not be same");
+    return;
+  }
+
+  playerList.value.push(new Player(playerOneUserName.value, "X", 0));
+  playerList.value.push(new Player(playerTwoUserName.value, "O", 0));
   savePlayersToLs(playerList.value);
 };
 
@@ -32,8 +30,7 @@ const playGame = () => {
   if (playerList.value.length === 2) {
     emit("startGame", playerList.value);
   } else {
-    //TODO fin validering i appen istöllet
-    console.log("Det måste vara två spelare med");
+    alert("It has to be two players for this game to start");
   }
 };
 
@@ -53,7 +50,7 @@ function savePlayersToLs(players: Player[]) {
         <input v-model="playerTwoUserName" type="text" placeholder="Player two" class="textbox" />
       </div>
       <div>
-        <button type="submit" class="btn" @click="handleSubmit">Submit</button>
+        <button type="submit" class="btn" @click="() => handleSubmit()">Submit</button>
       </div>
     </form>
   </div>

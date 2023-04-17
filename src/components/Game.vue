@@ -62,13 +62,6 @@ function createOrGetBoard() {
   }
 }
 
-function pushWinningPoints() {
-  //om spelare 1 vunnit ge den ett poäng
-  //annars ge spelare två poäng
-  //lagra i LS
-  //hämta poängen från LS före nästa match
-}
-
 const toggleSquare = (i: number) => {
   if (gameOver.value || board.value[i].clicked) {
     return;
@@ -114,14 +107,14 @@ function isWinner() {
       const xIsWinner = (currentValue: string) => currentValue == "X";
       const oIsWinner = (currentValue: string) => currentValue == "O";
 
-      if (potentialWinningLineMarkers.every(xIsWinner) && potentialWinningLineMarkers.length == 3) {
+      if (potentialWinningLineMarkers.every(xIsWinner) && potentialWinningLineMarkers.length === 3) {
         gameOver.value = true;
         winner.value = currentPlayer.value;
         currentPlayer.value.winningPoints++;
         saveCurrentScoreToLs(currentPlayer.value);
       }
 
-      if (potentialWinningLineMarkers.every(oIsWinner) && potentialWinningLineMarkers.length == 3) {
+      if (potentialWinningLineMarkers.every(oIsWinner) && potentialWinningLineMarkers.length === 3) {
         gameOver.value = true;
         winner.value = currentPlayer.value;
         currentPlayer.value.winningPoints++;
@@ -142,17 +135,18 @@ function saveBoardToLs(board: Square[]) {
 function resetGame() {
   localStorage.setItem("board", JSON.stringify([]));
   localStorage.setItem("players", JSON.stringify([]));
+  localStorage.setItem("currentScore", JSON.stringify([]));
 }
 </script>
 
 <template>
   <h3>These little fellas is playing tha game:</h3>
   <h3>{{ props.players[0].name }} and {{ props.players[1].name }}</h3>
-  <p v-if="winner == null">And now it is your turn: {{ currentPlayer.name }}</p>
+  <p v-if="!winner?.name">And now it is your turn: {{ currentPlayer.name }}</p>
   <p v-else>We have a winner: {{ winner?.name }}</p>
   <p>
     Current score: {{ props.players[0].name }}: {{ props.players[0].winningPoints }}: vs. {{ props.players[1].name }}:
-    {{ props.players[0].winningPoints }}:
+    {{ props.players[1].winningPoints }}:
   </p>
   <p></p>
 
