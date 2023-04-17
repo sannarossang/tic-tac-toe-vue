@@ -111,8 +111,8 @@ function isWinner() {
 <template>
   <h3>These little fellas is playing tha game:</h3>
   <h3>{{ props.players[0].name }} and {{ props.players[1].name }}</h3>
-  <p>And now it is your turn: {{ currentPlayer.name }}</p>
-  <p>We have a winner: {{ winner?.name }}</p>
+  <p v-if="winner == null">And now it is your turn: {{ currentPlayer.name }}</p>
+  <p v-else>We have a winner: {{ winner?.name }}</p>
   <p></p>
 
   <div class="board">
